@@ -7,7 +7,7 @@ import {
 } from "@nestjs/microservices";
 import { interval, map } from "rxjs";
 
-// define as opções de conexão com o microserviço
+// define as opções de conexão com o redis
 const clientOptions: ClientOptions = {
   transport: Transport.REDIS,
   options: {
@@ -53,11 +53,14 @@ interface Result {
 
 @Injectable()
 export class AppService {
+  // proxy para comunicação entre microserviços
   private readonly client: ClientProxy;
 
   constructor() {
+    // constrói a conexão com o redis
     this.client = ClientProxyFactory.create(clientOptions);
 
+    //o subscribe é um observable que fica escutando o valor do cachedItem
     this.cachedItem.subscribe((result) => {
       const r: Result = {
         animal: lottery.find((animal) =>
@@ -65,7 +68,7 @@ export class AppService {
         ),
         number: result,
       };
-      // envia o resultado para o cache
+      // envia o resultado para o redis
       return this.client.emit("result", r);
     });
   }

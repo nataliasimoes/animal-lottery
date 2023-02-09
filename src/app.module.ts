@@ -11,6 +11,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
   }),
   ],
   controllers: [AppController],
+  //definindo o prrovider do cache, definindo o objeto que vai ser usado no cache
   providers: [AppService, {
     provide: 'CACHE_MANAGER',
     useFactory: async () => {

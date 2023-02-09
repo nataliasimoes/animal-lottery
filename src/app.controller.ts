@@ -20,10 +20,12 @@ export class AppController {
           // O método duplicate cria um novo cliente e o método connect é chamado para conectar esse cliente ao Redis.
           client = await this.redisClient.duplicate();
           client.connect().then(() => {
-            this.redisClient.subscribe("result", (message, channel) => {
+            // subscribe no canal result e passando a mensagem
+            this.redisClient.subscribe("result", (message) => {
               const messageEvent = new MessageEvent("message", {
                 data: message,
               });
+              // é parâmetro callback do observable
               subscriber.next(messageEvent);
             });
           });
